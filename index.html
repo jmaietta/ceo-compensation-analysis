@@ -227,28 +227,20 @@
             }
             
             table {
-                font-size: 11px;
-                min-width: 800px; /* Ensures table doesn't get too cramped */
+                font-size: 12px;
+                min-width: 900px; /* Ensures all columns fit */
             }
             
             th, td {
-                padding: 6px 4px;
-                white-space: nowrap;
+                padding: 8px 4px;
             }
             
             th {
-                font-size: 10px;
+                font-size: 11px;
                 font-weight: 600;
             }
             
-            /* Hide less critical columns on very small screens */
-            th:nth-child(5), td:nth-child(5) { /* Total TSR */
-                display: none;
-            }
-            
-            th:nth-child(6), td:nth-child(6) { /* Tenure */
-                display: none;
-            }
+            /* Keep all columns visible - just make table scrollable */
         }
 
         @media (max-width: 480px) {
@@ -265,18 +257,15 @@
             }
             
             table {
-                font-size: 10px;
-                min-width: 600px;
+                font-size: 11px;
+                min-width: 800px; /* Smaller but still shows all columns */
             }
             
             th, td {
-                padding: 4px 2px;
+                padding: 6px 3px;
             }
             
-            /* Hide even more columns on tiny screens */
-            th:nth-child(4), td:nth-child(4) { /* Compensation */
-                display: none;
-            }
+            /* All columns remain visible - users can scroll horizontally */
         }
 
         .footer {
