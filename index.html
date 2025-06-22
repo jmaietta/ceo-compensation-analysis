@@ -169,6 +169,112 @@
             background: linear-gradient(90deg, rgba(231, 76, 60, 0.1), transparent);
         }
 
+        .mobile-cards {
+            display: none;
+        }
+
+        .ceo-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+        }
+
+        .ceo-card.high-performer {
+            border-left-color: #27ae60;
+            background: linear-gradient(90deg, rgba(46, 204, 113, 0.05), rgba(255, 255, 255, 0.95));
+        }
+
+        .ceo-card.poor-performer {
+            border-left-color: #e74c3c;
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.05), rgba(255, 255, 255, 0.95));
+        }
+
+        .ceo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .ceo-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .company-info {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .ticker-badge {
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .ceo-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.75em;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .metric-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .metric-value.positive {
+            color: #27ae60;
+        }
+
+        .metric-value.negative {
+            color: #e74c3c;
+        }
+
+        .efficiency-highlight {
+            grid-column: 1 / -1;
+            background: rgba(52, 152, 219, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .efficiency-label {
+            font-size: 0.8em;
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .efficiency-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -221,26 +327,15 @@
                 font-size: 16px; /* Prevents zoom on iOS */
             }
             
+            /* Hide table on mobile */
             .table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+                display: none;
             }
             
-            table {
-                font-size: 12px;
-                min-width: 900px; /* Ensures all columns fit */
+            /* Show cards on mobile */
+            .mobile-cards {
+                display: block;
             }
-            
-            th, td {
-                padding: 8px 4px;
-            }
-            
-            th {
-                font-size: 11px;
-                font-weight: 600;
-            }
-            
-            /* Keep all columns visible - just make table scrollable */
         }
 
         @media (max-width: 480px) {
@@ -256,16 +351,15 @@
                 grid-template-columns: 1fr;
             }
             
-            table {
-                font-size: 11px;
-                min-width: 800px; /* Smaller but still shows all columns */
+            .ceo-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
             
-            th, td {
-                padding: 6px 3px;
+            .ticker-badge {
+                margin-top: 5px;
+                align-self: flex-start;
             }
-            
-            /* All columns remain visible - users can scroll horizontally */
         }
 
         .footer {
@@ -346,6 +440,10 @@
                     <!-- Data will be populated by JavaScript -->
                 </tbody>
             </table>
+        </div>
+
+        <div class="mobile-cards" id="mobileCards">
+            <!-- Cards will be populated by JavaScript -->
         </div>
 
         <div class="footer">
@@ -486,6 +584,7 @@
         }
 
         function renderTable(data) {
+            // Render desktop table
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
@@ -504,6 +603,52 @@
                     <td>${formatCostPerTSR(row.costPerTSR)}</td>
                 `;
                 tbody.appendChild(tr);
+            });
+
+            // Render mobile cards
+            renderMobileCards(data);
+        }
+
+        function renderMobileCards(data) {
+            const mobileCards = document.getElementById('mobileCards');
+            mobileCards.innerHTML = '';
+
+            data.forEach(row => {
+                const card = document.createElement('div');
+                card.className = `ceo-card ${getPerformanceClass(row.avgTSR)}`;
+                
+                card.innerHTML = `
+                    <div class="ceo-header">
+                        <div>
+                            <div class="ceo-name">${row.ceo}</div>
+                            <div class="company-info">${row.company}</div>
+                        </div>
+                        <div class="ticker-badge">${row.ticker}</div>
+                    </div>
+                    <div class="ceo-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Compensation</div>
+                            <div class="metric-value">${formatCurrency(row.compensation)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Total TSR</div>
+                            <div class="metric-value ${getTSRClass(row.totalTSR)}">${formatPercentage(row.totalTSR)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Tenure</div>
+                            <div class="metric-value">${row.tenure} yrs</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Avg Annual TSR</div>
+                            <div class="metric-value ${getTSRClass(row.avgTSR)}">${formatPercentage(row.avgTSR)}</div>
+                        </div>
+                        <div class="efficiency-highlight">
+                            <div class="efficiency-label">Cost per 1% of Avg. Annual TSR</div>
+                            <div class="efficiency-value">${formatCostPerTSR(row.costPerTSR)}</div>
+                        </div>
+                    </div>
+                `;
+                mobileCards.appendChild(card);
             });
         }
 
